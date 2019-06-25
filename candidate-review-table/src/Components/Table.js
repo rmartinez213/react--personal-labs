@@ -19,15 +19,14 @@ class Table extends Component {
 
             home: true,
             edit: false,
-            add: false
+            add: false,
+            editIndex: null
         }
     }
-    
 
     componentDidMount() {
         
     }
-
 
     deleteFunction(index, e) {
         const newUsers = Object.assign([], this.state.users);
@@ -35,23 +34,28 @@ class Table extends Component {
         this.setState({ users: newUsers });
     }
 
-    onChangeAddUser(userInfo) {
+    editUserFunction(index, e) {
+
+        
         this.setState({
-            home: true,
-            add: false
-        })
-        const newUser = Object.assign([], this.state.users);
-        newUser.push(userInfo);
-        this.setState({ users: newUser })
+            editIndex: index,
+            home: false,
+            edit: true
+        });
+
+    }
+
+    onChangeAddUser(newUser) {
+        const newArray = Object.assign([], this.state.users);
+        newArray.push(newUser);
+        this.setState({ users: newArray, home: true, add: false })
     }
     
 
-    onChanceEditUser(userInfo) {
-
-        this.setState({
-            home: true,
-            edit: false
-        })
+    onChanceEditUser(editedUser) {
+        const newArray = Object.assign([], this.state.users);
+        console.log(newArray[this.state.editIndex] = editedUser);
+        this.setState({ users: newArray, home: true, edit: false })
     }
 
     resetHome() {
@@ -81,17 +85,21 @@ class Table extends Component {
                             <tbody>
                                 {this.state.users.map((user, index) => {
                                     return (
-                                            <tr key={user.id}>
-                                                <td>{user.id}</td>
-                                                <td>{user.name}</td>
-                                                <td>{user.specialist}</td>
-                                                <td>{user.presentation}</td>
-                                                <td>
-                                                    <button type='button' onClick={() => { this.setState({ home: false, edit: true }) }}>Edit</button>
-                                                    <button type='button' onClick={this.deleteFunction.bind(this, index)}>Delete</button>
-                                                </td>
-                                            </tr>
-                                    ) 
+                                        <tr key={user.id}>
+                                            <td>{user.id}</td>
+                                            <td>{user.name}</td>
+                                            <td>{user.specialist}</td>
+                                            <td>{user.presentation}</td>
+                                            <td>
+                                                <button
+                                                    type='button'
+                                                    onClick={this.editUserFunction.bind(this, index)}>
+                                                    Edit
+                                                </button>
+                                                <button type='button' onClick={this.deleteFunction.bind(this, user)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    )
                                 })}
                             </tbody>
                         </table>
@@ -101,15 +109,16 @@ class Table extends Component {
                     :
                     (
                         this.state.edit
-                            ? 
+                            ?
                             <EditUser
                                 editUser={this.onChanceEditUser.bind(this)}
+                                user={this.state.users[this.state.editIndex]}
                             />
                             :
                             <AddUser
                                 addUser={this.onChangeAddUser.bind(this)}
                                 cancel={this.resetHome.bind(this)}
-                                id={this.state.users[this.state.users.length - 1].id}
+                                id={(this.state.user === undefined) ? 0 : this.state.users[this.state.users.length - 1].id}
                             />
                     )
                 }

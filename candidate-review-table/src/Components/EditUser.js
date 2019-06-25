@@ -3,22 +3,30 @@ import React, { Component } from 'react'
 
 class EditUser extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
-            name: '',
-            specialist: '',
-            presentation: '',
+            user: this.props.user,
 
-            home: false,
-            edit: true,
-            add: false
+            id: this.props.user.id,
+            name: this.props.user.name,
+            specialist: this.props.user.specialist,
+            presentation: this.props.user.presentation
         }
     }
 
-    onEditUser() {
-        this.props.editUser('Yes');
+    onEditUser(e) {
+        e.preventDefault();
+
+        var newUser = {
+            id: this.state.id,
+            name: this.state.name,
+            specialist: this.state.specialist,
+            presentation: this.state.presentation
+        }
+
+        this.props.editUser(newUser);
     }
 
     onChange(e) {
@@ -30,29 +38,27 @@ class EditUser extends Component {
     render() {
 
         return(
-        <div>
-            <table className='tableEditStyle'>
-                <tbody>
-                    <tr>
+            <div>
+                <form onSubmit={e => this.onEditUser(e) }>
+                <table className='tableEditStyle'>
+                    <tbody>
+                        <tr>
 
-                            <td>
-                                Name:
-                            </td>
+                                <td>Name:</td>
 
-                            <td>
-                                <input
-                                    type='text'
-                                    value={this.state.name}
-                                    onChange={e => this.onChange(e)}
-                                    name='name'
-                                />
-                            </td>
-                    </tr>
+                                <td>
+                                    <input
+                                        type='text'
+                                        value={this.state.name}
+                                        onChange={e => this.onChange(e)}
+                                        name='name'
+                                        placeholder={this.state.name}
+                                    />
+                                </td>
+                        </tr>
 
-                    <tr>
-                            <td>
-                                Specialist:
-                            </td>
+                        <tr>
+                            <td>Specialist:</td>
 
                             <td>
                                 <input
@@ -60,11 +66,12 @@ class EditUser extends Component {
                                     value={this.state.specialist}
                                     onChange={e => this.onChange(e)}
                                     name='specialist'
+                                    placeholder={this.state.specialist}
                                 />
                             </td>
-                    </tr>
+                        </tr>
 
-                    <tr>
+                        <tr>
                             <td>
                                 Presentation:
                             </td>
@@ -75,12 +82,19 @@ class EditUser extends Component {
                                     value={this.state.presentation}
                                     onChange={e => this.onChange(e)}
                                     name='presentation'
+                                    placeholder={this.state.presentation}
                                 />
                             </td>
-                    </tr>
-                </tbody>
-                </table>
-                <button onClick={this.onEditUser.bind(this)}>Confirm</button> <button onClick={this.onEditUser.bind(this)}>Cancel</button>
+                        </tr>
+                    </tbody>
+                    </table>
+                    <input type='Submit' />
+                </form>
+                    
+
+                <button onClick={this.onEditUser.bind(this)}>
+                    Cancel
+                </button>
         </div>
     )}
 }
