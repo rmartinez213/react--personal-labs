@@ -12,9 +12,6 @@ class Table extends Component {
 
         this.state = {
             users: [
-                { id: 1, name: 'Robert Martinez', specialist: 'Computer Science', presentation: 'The future of technology' },
-                { id: 2, name: 'Chief Keif', specialist: 'Buisness', presentation: 'Buisiness to succeed' },
-                { id: 3, name: 'Rodger Doger', specialist: 'Architecture', presentation: 'Build and beyond' }
             ],
 
             home: true,
@@ -119,7 +116,7 @@ class Table extends Component {
                             <AddUser
                                 addUser={this.onChangeAddUser.bind(this)}
                                 cancel={this.resetHome.bind(this)}
-                                id={(this.state.users === undefined) ? 0 : this.state.users[this.state.users.length - 1].id}
+                                id={(this.state.users.length === 0) ? 0 : this.state.users[this.state.users.length - 1].id}
                             />
                     )
                 }
