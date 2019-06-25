@@ -28,6 +28,7 @@ class EditUser extends Component {
 
         this.props.editUser(newUser);
     }
+    
 
     onChange(e) {
         this.setState({
@@ -92,7 +93,7 @@ class EditUser extends Component {
                 </form>
                     
 
-                <button onClick={this.onEditUser.bind(this)}>
+                <button onClick={() => this.props.cancel()}>
                     Cancel
                 </button>
         </div>

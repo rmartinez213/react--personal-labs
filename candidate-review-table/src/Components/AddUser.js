@@ -13,15 +13,7 @@ class AddUser extends Component {
             presentation: ''
         };
     }
-
-    onAddUser() {
-        this.props.addUser();
-    }
-
-    onCancel() {
-        this.props.addUser();
-    }
-
+  
     change(e) {
         this.setState({
             [e.target.name]: e.target.value

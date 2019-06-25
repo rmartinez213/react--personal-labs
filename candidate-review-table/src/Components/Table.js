@@ -113,12 +113,13 @@ class Table extends Component {
                             <EditUser
                                 editUser={this.onChanceEditUser.bind(this)}
                                 user={this.state.users[this.state.editIndex]}
+                                cancel={this.resetHome.bind(this)}
                             />
                             :
                             <AddUser
                                 addUser={this.onChangeAddUser.bind(this)}
                                 cancel={this.resetHome.bind(this)}
-                                id={(this.state.user === undefined) ? 0 : this.state.users[this.state.users.length - 1].id}
+                                id={(this.state.users === undefined) ? 0 : this.state.users[this.state.users.length - 1].id}
                             />
                     )
                 }
