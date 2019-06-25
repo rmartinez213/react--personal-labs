@@ -10,7 +10,8 @@ class AddUser extends Component {
             id: ((this.props.id) + 1),
             name: '',
             specialist: '',
-            presentation: ''
+            presentation: '',
+            rating: 'N/A'
         };
     }
   

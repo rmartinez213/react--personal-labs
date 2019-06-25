@@ -12,7 +12,8 @@ class EditUser extends Component {
             id: this.props.user.id,
             name: this.props.user.name,
             specialist: this.props.user.specialist,
-            presentation: this.props.user.presentation
+            presentation: this.props.user.presentation,
+            rating: this.props.user.rating
         }
     }
 
@@ -23,7 +24,8 @@ class EditUser extends Component {
             id: this.state.id,
             name: this.state.name,
             specialist: this.state.specialist,
-            presentation: this.state.presentation
+            presentation: this.state.presentation,
+            rating: this.state.rating
         }
 
         this.props.editUser(newUser);

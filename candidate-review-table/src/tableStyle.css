@@ -24,3 +24,14 @@ table tr td{
 input{
 
 }
+
+a{
+    text-decoration: none;
+    color:blue;
+    font-weight: bold;
+}
+
+a:active{
+    color:blue;
+    font-weight: bold;
+}
