@@ -18,13 +18,15 @@ class Table extends Component {
                 { id: 3, name: 'Rodger Doger', specialist: 'Architecture', presentation: 'Build and beyond', rating: 4 }
             ],
 
+            reviews: [
+                { id: 1, UserInterviewID: 2, rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
+                { id: 2, UserInterviewID: 2, rating: 3, name: 'Johnny Sizario', date: '5/2/2019', comment: 'He likes raw chicken. He has so much stuff in class in terms of material. He only allows you to use 1 cheat sheet for the final.' }
+            ],
+
             home: true,
             edit: false,
             add: false,
             review: false,
-            reviews: [
-                { id: 1, review: ['This is a review', 'This ia  2', 'Yessss']}
-            ],
             currIndex: null
         }
     }
@@ -41,7 +43,7 @@ class Table extends Component {
 
     editUserFunction(index, e) {
         this.setState({
-            editIndex: index,
+            currIndex: index,
             home: false,
             edit: true
         });
@@ -52,7 +54,7 @@ class Table extends Component {
         console.log('test')
 
         this.setState({
-            editIndex: index,
+            currIndex: index,
             home: false,
             edit: false,
             add: false,
@@ -89,7 +91,7 @@ class Table extends Component {
 
         if (this.state.home) {
             return (
-                <div>
+                <div className='AlignDivStyle'>
                     <table className='tableClass'>
                         <thead>
                             <tr>
@@ -106,7 +108,7 @@ class Table extends Component {
                                 return (
                                     <tr key={user.id}>
                                         <td>{user.id}</td>
-                                        <td><a onClick={this.reviewFunction.bind(this, index)}>{user.name}</a></td>
+                                        <td><button onClick={this.reviewFunction.bind(this, index)} className='noStyleButton'>{user.name}</button></td>
                                         <td>{user.specialist}</td>
                                         <td>{user.presentation}</td>
                                         <td>{user.rating}</td>
@@ -153,6 +155,7 @@ class Table extends Component {
                 <ReviewUser
                     reviewUser={this.onChangeReview.bind(this)}
                     user={this.state.users[this.state.currIndex]}
+                    reviews={this.state.reviews}
                     cancel={this.resetHome.bind(this)}
                 />
             )
