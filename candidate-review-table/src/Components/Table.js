@@ -13,14 +13,9 @@ class Table extends Component {
 
         this.state = {
             users: [
-                { id: 1, name: 'Robert Martinez', specialist: 'Computer Science', presentation: 'The future of technology', rating: 'N/A' },
-                { id: 2, name: 'Chief Keif', specialist: 'Buisness', presentation: 'Buisiness to succeed', rating: 2 },
-                { id: 3, name: 'Rodger Doger', specialist: 'Architecture', presentation: 'Build and beyond', rating: 4 }
             ],
 
             reviews: [
-                { id: 1, UserInterviewID: 2, rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
-                { id: 2, UserInterviewID: 2, rating: 3, name: 'Johnny Sizario', date: '5/2/2019', comment: 'He likes raw chicken. He has so much stuff in class in terms of material. He only allows you to use 1 cheat sheet for the final.' }
             ],
 
             home: true,
@@ -31,8 +26,17 @@ class Table extends Component {
         }
     }
 
-    componentDidMount() {
-        
+    componentWillMount() {
+
+        this.state.users.map((user, index) => {
+            this.state.reviews.map((reviewUser, index) => {
+                if (reviewUser.UserInterviewID === user.id) {
+                    
+                    return console.log('User Interview ID' + reviewUser.UserInterviewID + '. ID: ' + user.id)
+                }
+            })
+        })
+
     }
 
     deleteFunction(index, e) {
@@ -50,8 +54,6 @@ class Table extends Component {
     }
 
     reviewFunction(index, e) {
-
-        console.log('test')
 
         this.setState({
             currIndex: index,
@@ -76,7 +78,30 @@ class Table extends Component {
     }
 
     onChangeReview(newReview) {
+        console.log(newReview)
 
+        //Add new review to existing list
+        var newReviewArray = Object.assign([], this.state.reviews)
+        newReviewArray.push(newReview);
+        this.setState({ reviews: newReviewArray, home: true, review: false })
+
+        var newArray = null;
+
+        this.state.users.map((user, userIndex) => {
+            if (newReview.UserInterviewID === user.id) {
+                if (user.rating === 'N/A') {
+                    newArray = Object.assign([], this.state.users)
+                    newArray[userIndex].rating = (newReview.rating)
+                    this.setState({ users: newArray })
+                }
+                else {
+                    newArray = Object.assign([], this.state.users)
+                    newArray[userIndex].rating += newReview.rating;
+                    this.setState({ users: newArray })
+                    return;              
+                }
+            }
+        })
     }
 
     resetHome() {

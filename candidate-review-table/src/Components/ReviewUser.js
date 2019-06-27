@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Date } from 'core-js';
 
 class ReviewUser extends Component {
 
@@ -7,10 +8,60 @@ class ReviewUser extends Component {
 
         this.state = {
             reviews: this.props.reviews,
-            user: this.props.user
+            user: this.props.user,
+
+            inputReviewVal: 3,
+            inputName: '',
+            inputComment: ''
         }
     }
 
+    onSubmitReview(e) {
+        e.preventDefault();
+
+        var date = new Date();
+        var formatedDate = date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear();
+        var newReview = null;
+
+        if (this.state.reviews.length === 0) {
+            newReview = {
+                id: 1,
+                UserInterviewID: this.state.user.id,
+                rating: parseInt(this.state.inputReviewVal),
+                name: this.state.inputName,
+                date: formatedDate,
+                comment: this.state.inputComment
+            }
+        }
+
+        else {
+            newReview = {
+                id: this.state.reviews[this.state.reviews.length - 1].id + 1,
+                UserInterviewID: this.state.user.id,
+                rating: parseInt(this.state.inputReviewVal),
+                name: this.state.inputName,
+                date: formatedDate,
+                comment: this.state.inputComment
+            }
+        }
+
+
+        this.props.reviewUser(newReview);
+    }
+
+    //Manage keystroke events
+    onChange(e) {
+        this.setState({
+            [e.target.name]: e.target.value 
+        })
+    }
+
+    //Manage radio button changes
+    onChangeRadio(e) {
+        this.setState({
+            [e.target.name]: e.target.id
+        })
+    }
 
 
     render() {
@@ -40,8 +91,7 @@ class ReviewUser extends Component {
                     </tbody>
                 </table>
 
-
-                <table className='reviewTableClass'>
+                <table className='reviewTableStyle'>
                     <tbody>
                         {this.state.reviews.map((review, index) => {
                             if (review.UserInterviewID === this.state.user.id) {
@@ -52,10 +102,42 @@ class ReviewUser extends Component {
                                     </tr>
                                 )
                             }
-                            return null  
+                            return null
                         })}
                     </tbody>
                 </table>
+
+                <form onSubmit={e => this.onSubmitReview(e)}>
+                    <table className='reviewTableInputStyle'>
+                        <tbody>
+                            <tr>
+                                <td><b>Rating</b></td>
+                                <td align='left'>
+                                    1<input id={1} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
+                                    <input id={2} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
+                                    <input id={3} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
+                                    <input id={4} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
+                                    <input id={5} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />5
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Name</b></td>
+                                <td align='left'><input type='text' onChange={e => this.onChange(e)} value={this.state.inputName} name='inputName' /></td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Comments</b></td>
+                                <td align='left'><textarea name='inputComment' onChange={e => this.onChange(e)} value={this.state.inputComment} cols='100' rows='7' /></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type='submit' /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            
             </div>
         )
     }

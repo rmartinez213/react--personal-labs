@@ -13,8 +13,20 @@
     border-color: gray;
 }
 
-.reviewTableClass {
+.reviewTableStyle {
     width: 60%;
+    border: solid;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 2px;
+    border-color: gray;
+    margin-top: 2%;
+}
+
+.reviewTableInputStyle {
+    width: 40%;
     border: solid;
     align-content: center;
     margin-left: auto;
