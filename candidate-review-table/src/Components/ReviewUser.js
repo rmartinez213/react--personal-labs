@@ -86,7 +86,7 @@ class ReviewUser extends Component {
                             <td>{this.state.user.name}</td>
                             <td>{this.state.user.specialist}</td>
                             <td>{this.state.user.presentation}</td>
-                            <td>{this.state.user.rating}</td>
+                            <td>{(this.state.user.rating / this.state.user.totalReviews).toPrecision(3)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -95,12 +95,19 @@ class ReviewUser extends Component {
                     <tbody>
                         {this.state.reviews.map((review, index) => {
                             if (review.UserInterviewID === this.state.user.id) {
-                                return (
-                                    <tr key={review.id} className='divWidth'>
-                                        <td>Rating: {review.rating}</td>
+                                return [
+
+                                    <tr key={review.id}>
+                                        <td className='ratingStyle'>Rating: {review.rating}</td>
                                         <td align='right'>Posted by {review.name} on {review.date}</td>
+                                    </tr>,
+
+                                    <tr className='commentStyle' key={review.id + '-1'}>
+                                        <td colSpan={2}>
+                                        Comment: {review.comment}
+                                        </td>
                                     </tr>
-                                )
+                                ]
                             }
                             return null
                         })}

@@ -11,7 +11,8 @@ class AddUser extends Component {
             name: '',
             specialist: '',
             presentation: '',
-            rating: 'N/A'
+            rating: 'N/A',
+            totalReviews: 0
         };
     }
   

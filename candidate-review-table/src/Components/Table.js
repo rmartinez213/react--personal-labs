@@ -7,15 +7,24 @@ import ReviewUser from './ReviewUser'
 
 
 class Table extends Component {
+    /*
+    
 
+
+    */
     constructor() {
         super();
 
         this.state = {
             users: [
+                { id: 1, name: 'Robert Martinez', specialist: 'Computer Science', presentation: 'The future of technology', rating: 'N/A', totalReviews: 0 },
+                { id: 2, name: 'Chief Keif', specialist: 'Buisness', presentation: 'Buisiness to succeed', rating: 'N/A', totalReviews: 2 },
+                { id: 3, name: 'Rodger Doger', specialist: 'Architecture', presentation: 'Build and beyond', rating: 'N/A', totalReviews: 0 }
             ],
 
             reviews: [
+                { id: 1, UserInterviewID: 2, rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
+                { id: 2, UserInterviewID: 2, rating: 3, name: 'Johnny Sizario', date: '5/2/2019', comment: 'He likes raw chicken. He has so much stuff in class in terms of material. He only allows you to use 1 cheat sheet for the final.' }
             ],
 
             home: true,
@@ -28,17 +37,30 @@ class Table extends Component {
 
     componentWillMount() {
 
-        this.state.users.map((user, index) => {
+        //UNCOMMENT if database will be used or there is local existing data
+        var newArray = null;
+        
+        this.state.users.map((user, userIndex) => {
             this.state.reviews.map((reviewUser, index) => {
-                if (reviewUser.UserInterviewID === user.id) {
-                    
-                    return console.log('User Interview ID' + reviewUser.UserInterviewID + '. ID: ' + user.id)
+                if (user.id === reviewUser.UserInterviewID && user.rating === 'N/A') {
+                    //console.log('NEW REVIEW FOR OTHER');
+                    newArray = Object.assign([], this.state.users);
+                    newArray[userIndex].rating = reviewUser.rating;
+                    newArray[userIndex].totalReviews = 1;
+                    this.setState({ users: newArray });
+                }
+
+                else if (reviewUser.UserInterviewID === user.id) {
+                    newArray = Object.assign([], this.state.users)
+                    newArray[userIndex].rating += reviewUser.rating
+                    newArray[userIndex].totalReviews += 1
+                    this.setState({ users: newArray })
                 }
             })
         })
-
+        
     }
-
+    
     deleteFunction(index, e) {
         const newUsers = Object.assign([], this.state.users);
         newUsers.splice(index, 1);
@@ -54,7 +76,6 @@ class Table extends Component {
     }
 
     reviewFunction(index, e) {
-
         this.setState({
             currIndex: index,
             home: false,
@@ -64,13 +85,14 @@ class Table extends Component {
         });
     }
 
+    //Create new array obj and set state
     onChangeAddUser(newUser) {
         const newArray = Object.assign([], this.state.users);
         newArray.push(newUser);
         this.setState({ users: newArray, home: true, add: false })
     }
     
-
+    //Create new array obj, edit array values, and set state
     onChanceEditUser(editedUser) {
         const newArray = Object.assign([], this.state.users);
         console.log(newArray[this.state.currIndex] = editedUser);
@@ -88,18 +110,19 @@ class Table extends Component {
         var newArray = null;
 
         this.state.users.map((user, userIndex) => {
-            if (newReview.UserInterviewID === user.id) {
-                if (user.rating === 'N/A') {
-                    newArray = Object.assign([], this.state.users)
-                    newArray[userIndex].rating = (newReview.rating)
-                    this.setState({ users: newArray })
-                }
-                else {
-                    newArray = Object.assign([], this.state.users)
-                    newArray[userIndex].rating += newReview.rating;
-                    this.setState({ users: newArray })
-                    return;              
-                }
+            if (user.id === newReview.UserInterviewID && user.rating === 'N/A') {
+                console.log('NEW REVIEW FOR OTHER')
+                newArray = Object.assign([], this.state.users);
+                newArray[userIndex].rating = newReview.rating;
+                newArray[userIndex].totalReviews = 1;
+                this.setState({ users: newArray });
+            }
+
+            else if (user.id === newReview.UserInterviewID) {
+                newArray = Object.assign([], this.state.users)
+                newArray[userIndex].rating += newReview.rating;
+                newArray[userIndex].totalReviews += 1;
+                this.setState({ users: newArray });
             }
         })
     }
@@ -136,7 +159,7 @@ class Table extends Component {
                                         <td><button onClick={this.reviewFunction.bind(this, index)} className='noStyleButton'>{user.name}</button></td>
                                         <td>{user.specialist}</td>
                                         <td>{user.presentation}</td>
-                                        <td>{user.rating}</td>
+                                        <td>{(user.rating / user.totalReviews).toPrecision(3)}</td>
                                         <td>
                                             <button
                                                 type='button'

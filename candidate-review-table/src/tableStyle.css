@@ -81,3 +81,11 @@ a:active{
     color: blue;
     font-weight: bold;
 }
+
+.commentStyle{
+    width: 100%;
+}
+
+.ratingStyle{
+    width: 30%;
+}
