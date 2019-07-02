@@ -38,8 +38,28 @@ class Table extends Component {
             ],
 
             accounts: [
-                { id: 1, role: 'admin', name: 'Redmundo Zakkary', email: 'remk@yahoo.com', password: '1234' },
-                { id: 2, role: 'admin',name: 'Jefferey Wilcox', email: 'jeffcox@yahoo.com', password: '1234' }
+                {
+                    id: 1,
+                    role: 'admin',
+                    name: 'Redmundo Zakkary',
+                    email: 'remk@yahoo.com',
+                    password: '1234'
+                },
+
+                {
+                    id: 2, role: 'admin',
+                    name: 'Jefferey Wilcox',
+                    email: 'jeffcox@yahoo.com',
+                    password: '1234'
+                },
+
+                {
+                    id: 3,
+                    role: 'user',
+                    name: 'Bill French',
+                    email: 'billFrench@yahoo.com',
+                    password: '1234'
+                }
             ],
 
             home: true,
@@ -54,7 +74,9 @@ class Table extends Component {
     }
 
     componentWillMount() {
-        
+
+        console.log(this.state.accounts[2].reviews[0].name)
+
         //UNCOMMENT if database will be used or there is local existing data
         var newArray = null;
         
@@ -158,6 +180,10 @@ class Table extends Component {
         this.setState({
             home: true,
             Login: false
+        })
+
+        this.setState({
+            userRole: newLogin.role
         })
     }
 
