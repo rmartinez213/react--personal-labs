@@ -89,3 +89,11 @@ a:active{
 .ratingStyle{
     width: 30%;
 }
+
+.loginStyle{
+    padding-top: 25%;
+}
+
+.displayLoginMessage{
+    display:none;
+}

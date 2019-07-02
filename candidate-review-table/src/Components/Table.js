@@ -3,23 +3,33 @@ import '../tableStyle.css'
 import EditUser from './EditUser'
 import AddUser from './AddUser'
 import ReviewUser from './ReviewUser'
+import Login from './Login'
 
+const checkAuth = () => {
+    const token = localStorage.getItem('token')
+    const refreshToken = localStorage.getItem('refreshToken');
 
+    console.log(token);
+    console.log(refreshToken);
+
+    if (!token || !refreshToken) {
+        return false;
+    }
+}
 
 class Table extends Component {
+
     /*
-    
-
-
     */
+
     constructor() {
         super();
 
         this.state = {
             users: [
-                { id: 1, name: 'Robert Martinez', specialist: 'Computer Science', presentation: 'The future of technology', rating: 'N/A', totalReviews: 0 },
-                { id: 2, name: 'Chief Keif', specialist: 'Buisness', presentation: 'Buisiness to succeed', rating: 'N/A', totalReviews: 2 },
-                { id: 3, name: 'Rodger Doger', specialist: 'Architecture', presentation: 'Build and beyond', rating: 'N/A', totalReviews: 0 }
+                { id: 1, name: 'Robert Martinez', specialist: 'Computer Science', presentation: 'The future of technology', rating: 'NONE', totalReviews: 0 },
+                { id: 2, name: 'Chief Keif', specialist: 'Buisness', presentation: 'Buisiness to succeed', rating: 'NONE', totalReviews: 2 },
+                { id: 3, name: 'Rodger Doger', specialist: 'Architecture', presentation: 'Build and beyond', rating: 'NONE', totalReviews: 0 }
             ],
 
             reviews: [
@@ -27,22 +37,30 @@ class Table extends Component {
                 { id: 2, UserInterviewID: 2, rating: 3, name: 'Johnny Sizario', date: '5/2/2019', comment: 'He likes raw chicken. He has so much stuff in class in terms of material. He only allows you to use 1 cheat sheet for the final.' }
             ],
 
+            accounts: [
+                { id: 1, role: 'admin', name: 'Redmundo Zakkary', email: 'remk@yahoo.com', password: '1234' },
+                { id: 2, role: 'admin',name: 'Jefferey Wilcox', email: 'jeffcox@yahoo.com', password: '1234' }
+            ],
+
             home: true,
             edit: false,
             add: false,
             review: false,
-            currIndex: null
+            login: false,
+
+            currIndex: null,
+            userRole: ''
         }
     }
 
     componentWillMount() {
-
+        
         //UNCOMMENT if database will be used or there is local existing data
         var newArray = null;
         
         this.state.users.map((user, userIndex) => {
             this.state.reviews.map((reviewUser, index) => {
-                if (user.id === reviewUser.UserInterviewID && user.rating === 'N/A') {
+                if (user.id === reviewUser.UserInterviewID && user.rating === 'NONE') {
                     //console.log('NEW REVIEW FOR OTHER');
                     newArray = Object.assign([], this.state.users);
                     newArray[userIndex].rating = reviewUser.rating;
@@ -85,6 +103,16 @@ class Table extends Component {
         });
     }
 
+    loginFunction(index, e) {
+        this.setState({
+            home: false,
+            edit: false,
+            add: false,
+            review: false,
+            login: true
+        });
+    }
+
     //Create new array obj and set state
     onChangeAddUser(newUser) {
         const newArray = Object.assign([], this.state.users);
@@ -110,8 +138,7 @@ class Table extends Component {
         var newArray = null;
 
         this.state.users.map((user, userIndex) => {
-            if (user.id === newReview.UserInterviewID && user.rating === 'N/A') {
-                console.log('NEW REVIEW FOR OTHER')
+            if (user.id === newReview.UserInterviewID && user.rating === 'NONE') {
                 newArray = Object.assign([], this.state.users);
                 newArray[userIndex].rating = newReview.rating;
                 newArray[userIndex].totalReviews = 1;
@@ -127,19 +154,28 @@ class Table extends Component {
         })
     }
 
+    onLogin(newLogin) {
+        this.setState({
+            home: true,
+            Login: false
+        })
+    }
+
     resetHome() {
         this.setState({
             home: true,
             add: false,
-            edit: false
+            edit: false,
+            review: false,
+            login: false
         })
     }
 
     render() {
-
         if (this.state.home) {
             return (
                 <div className='AlignDivStyle'>
+                    <button className='noStyleButton' onClick={this.loginFunction.bind(this)}>Log in</button>
                     <table className='tableClass'>
                         <thead>
                             <tr>
@@ -148,7 +184,11 @@ class Table extends Component {
                                 <td><b>Specialist</b></td>
                                 <td><b>Presentation</b></td>
                                 <td><b>Rating</b></td>
-                                <td><b>Operations</b></td>
+                                {this.state.userRole === 'admin' ? (
+                                    <td> <b>Operations</b></td>
+                                ) :
+                                    (null)
+                                }
                             </tr>
                         </thead>
                         <tbody>
@@ -159,21 +199,30 @@ class Table extends Component {
                                         <td><button onClick={this.reviewFunction.bind(this, index)} className='noStyleButton'>{user.name}</button></td>
                                         <td>{user.specialist}</td>
                                         <td>{user.presentation}</td>
-                                        <td>{(user.rating / user.totalReviews).toPrecision(3)}</td>
-                                        <td>
-                                            <button
-                                                type='button'
-                                                onClick={this.editUserFunction.bind(this, index)}>
-                                                Edit
+                                        <td>{user.rating === 'NONE' ? user.rating : (user.rating / user.totalReviews).toPrecision(3)}</td>
+                                        {this.state.userRole === 'admin' ? (
+                                            <td>
+                                                <button
+                                                    type='button'
+                                                    onClick={this.editUserFunction.bind(this, index)}>
+                                                    Edit
                                                 </button>
-                                            <button type='button' onClick={this.deleteFunction.bind(this, user)}>Delete</button>
-                                        </td>
+                                                <button type='button' onClick={this.deleteFunction.bind(this, user)}>Delete</button>
+                                            </td>
+                                            )
+                                            :
+                                            (null)
+                                        }
                                     </tr>
                                 )
                             })}
                         </tbody>
                     </table>
-                    <button onClick={() => { this.setState({ home: false, add: true }) }}>Add Student</button>
+                    {this.state.userRole === 'admin' ? (
+                        <button onClick={() => { this.setState({ home: false, add: true }) }}>Add Student</button>
+                        ) :
+                        (null)
+                    }
                 </div>
             )
         }
@@ -208,6 +257,16 @@ class Table extends Component {
                 />
             )
         }
+        else if (this.state.login) {
+            return (
+                <Login
+                    loginUser={this.onLogin.bind(this)}
+                    accounts={this.state.accounts}
+                    cancel={this.resetHome.bind(this)}
+                />
+            )
+        }
+
         else {
             return (
                 <div>
