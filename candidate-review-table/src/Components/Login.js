@@ -21,7 +21,7 @@ class Login extends Component {
 
         this.state.accounts.map((account, index) => {
             if (account.email === this.state.email && account.password === this.state.password) {
-                console.log('you logged in!!!')
+                console.log('You are logged in as: ' + account.role);
                 this.props.loginUser(account);
             }
         })

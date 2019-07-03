@@ -7,12 +7,37 @@ class ReviewUser extends Component {
         super(props)
 
         this.state = {
+            checked1: '',
+            checked2: '',
+            checked3: '',
+            checked4: '',
+            checked5: '',
+            
             reviews: this.props.reviews,
             user: this.props.user,
+            account: this.props.loginAccount,
 
             inputReviewVal: 3,
             inputName: '',
             inputComment: ''
+        }
+    }
+
+    componentWillMount() {
+
+        console.log('checked' + 2);
+        
+        if (this.state.account !== null) {
+            this.state.reviews.map((review, userIndex) => {
+                if (review.AccountID === this.state.account.id && this.state.user.id === review.UserInterviewID) {
+                    console.log('Existing Review!!');
+                    this.setState({
+                        inputName: review.name,
+                        inputComment: review.comment,
+                        ['checked'+review.rating]: 'checked'
+                    })
+                }
+            })
         }
     }
 
@@ -59,8 +84,15 @@ class ReviewUser extends Component {
     //Manage radio button changes
     onChangeRadio(e) {
         this.setState({
-            [e.target.name]: e.target.id
+            [e.target.name]: e.target.id,
+            ['checked' + this.state.inputReviewVal]: '',
+            ['checked' + e.target.id]: 'checked'
         })
+    }
+
+    displayEditTable() {
+
+       
     }
 
 
@@ -113,37 +145,45 @@ class ReviewUser extends Component {
                     </tbody>
                 </table>
 
-                <form onSubmit={e => this.onSubmitReview(e)}>
-                    <table className='reviewTableInputStyle'>
-                        <tbody>
-                            <tr>
-                                <td><b>Rating</b></td>
-                                <td align='left'>
-                                    1<input id={1} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
-                                    <input id={2} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
-                                    <input id={3} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
-                                    <input id={4} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />
-                                    <input id={5} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} />5
+                {/* Display edit table based on signed in account */}
+                {(this.state.account !== null) ? (
+                    <form onSubmit={e => this.onSubmitReview(e)}>
+                        <table className='reviewTableInputStyle'>
+                            <tbody>
+                                <tr>
+                                    <td><b>Rating</b></td>
+                                    <td align='left'>
+                                        1<input id={1} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked1} />
+                                        <input id={2} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked2} />
+                                        <input id={3} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked3} />
+                                        <input id={4} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked4} />
+                                        <input id={5} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked5} />5
                                 </td>
-                            </tr>
+                                </tr>
 
-                            <tr>
-                                <td><b>Name</b></td>
-                                <td align='left'><input type='text' onChange={e => this.onChange(e)} value={this.state.inputName} name='inputName' /></td>
-                            </tr>
+                                <tr>
+                                    <td><b>Name</b></td>
+                                    <td align='left'><input type='text' onChange={e => this.onChange(e)} value={this.state.inputName} name='inputName' /></td>
+                                </tr>
 
-                            <tr>
-                                <td><b>Comments</b></td>
-                                <td align='left'><textarea name='inputComment' onChange={e => this.onChange(e)} value={this.state.inputComment} cols='100' rows='7' /></td>
-                            </tr>
+                                <tr>
+                                    <td><b>Comments</b></td>
+                                    <td align='left'><textarea onChange={e => this.onChange(e)} value={this.state.inputComment} name='inputComment' cols='100' rows='7' /></td>
+                                </tr>
 
-                            <tr>
-                                <td colSpan='2'><input type='submit' /></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                <tr>
+                                    <td colSpan='2'><input type='submit' /></td>
+                                </tr>
+                            </tbody>
+                        </table>
                 </form>
-            
+                ): 
+                    (
+                        null
+                )
+            }
+
+    
             </div>
         )
     }

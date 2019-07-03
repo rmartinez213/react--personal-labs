@@ -33,49 +33,30 @@ class Table extends Component {
             ],
 
             reviews: [
-                { id: 1, UserInterviewID: 2, rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
-                { id: 2, UserInterviewID: 2, rating: 3, name: 'Johnny Sizario', date: '5/2/2019', comment: 'He likes raw chicken. He has so much stuff in class in terms of material. He only allows you to use 1 cheat sheet for the final.' }
+                { id: 1, UserInterviewID: 2, AccountID:3 , rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
+                { id: 2, UserInterviewID: 1, AccountID:3 , rating: 3, name: 'Johnny Sizario', date: '5/2/2019', comment: 'He likes raw chicken. He has so much stuff in class in terms of material. He only allows you to use 1 cheat sheet for the final.'}
             ],
 
             accounts: [
-                {
-                    id: 1,
-                    role: 'admin',
-                    name: 'Redmundo Zakkary',
-                    email: 'remk@yahoo.com',
-                    password: '1234'
-                },
-
-                {
-                    id: 2, role: 'admin',
-                    name: 'Jefferey Wilcox',
-                    email: 'jeffcox@yahoo.com',
-                    password: '1234'
-                },
-
-                {
-                    id: 3,
-                    role: 'user',
-                    name: 'Bill French',
-                    email: 'billFrench@yahoo.com',
-                    password: '1234'
-                }
+                { id: 1, role: 'admin', name: 'Redmundo Zakkary', email: 'remk@yahoo.com', password: '1234'},
+                { id: 2, role: 'admin', name: 'Jefferey Wilcox', email: 'jeffcox@yahoo.com', password: '1234'},
+                { id: 3, role: 'user', name: 'Bill French', email: 'billFrench@yahoo.com', password: '1234'}
             ],
 
+            /* Values for rendering various views */
             home: true,
             edit: false,
             add: false,
             review: false,
             login: false,
 
+            /* Values for displaying */
             currIndex: null,
-            userRole: ''
+            loginUser: null
         }
     }
 
     componentWillMount() {
-
-        console.log(this.state.accounts[2].reviews[0].name)
 
         //UNCOMMENT if database will be used or there is local existing data
         var newArray = null;
@@ -177,13 +158,11 @@ class Table extends Component {
     }
 
     onLogin(newLogin) {
-        this.setState({
-            home: true,
-            Login: false
-        })
 
         this.setState({
-            userRole: newLogin.role
+            loginUser: newLogin,
+            home: true,
+            Login: false
         })
     }
 
@@ -222,7 +201,12 @@ class Table extends Component {
                                 return (
                                     <tr key={user.id}>
                                         <td>{user.id}</td>
-                                        <td><button onClick={this.reviewFunction.bind(this, index)} className='noStyleButton'>{user.name}</button></td>
+                                        <td>
+                                            <button
+                                                onClick={this.reviewFunction.bind(this, index)}
+                                                className='noStyleButton'>{user.name}
+                                            </button>
+                                        </td>
                                         <td>{user.specialist}</td>
                                         <td>{user.presentation}</td>
                                         <td>{user.rating === 'NONE' ? user.rating : (user.rating / user.totalReviews).toPrecision(3)}</td>
@@ -275,9 +259,11 @@ class Table extends Component {
 
         else if (this.state.review) {
             return (
+                console.log(this.state.loginUser),
                 <ReviewUser
                     reviewUser={this.onChangeReview.bind(this)}
                     user={this.state.users[this.state.currIndex]}
+                    loginAccount={this.state.loginUser}
                     reviews={this.state.reviews}
                     cancel={this.resetHome.bind(this)}
                 />
