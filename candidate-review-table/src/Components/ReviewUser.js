@@ -85,12 +85,16 @@ class ReviewUser extends Component {
 
         this.props.reviewUser(newReview, this.state.isReviewed, this.state.UserIndex, this.state.OldRating);
     }
+    
 
     //Manage keystroke events
     onChange(e) {
-        this.setState({
-            [e.target.name]: e.target.value 
-        })
+        if (this.state.inputComment.length < 120) {
+            this.setState({
+                [e.target.name]: e.target.value
+            })
+        }
+        
     }
 
     //Manage radio button changes
@@ -168,7 +172,10 @@ class ReviewUser extends Component {
 
                                 <tr>
                                     <td><b>Comments</b></td>
-                                    <td align='left'><textarea onChange={e => this.onChange(e)} value={this.state.inputComment} name='inputComment' cols='100' rows='7' /></td>
+                                    <td align='left'>
+                                        <textarea onChange={e => this.onChange(e)} value={this.state.inputComment} name='inputComment' cols='100' rows='7' />
+                                        <div>{this.state.inputComment.length}/120 </div>
+                                    </td>
                                 </tr>
 
                                 <tr>
