@@ -140,36 +140,62 @@ class Table extends Component {
         this.setState({ users: newArray, home: true, edit: false })
     }
 
-    onChangeReview(newReview, isReviewed, ReviewUserIndex) {
-        //{ id: 1, UserInterviewID: 2, AccountID: 3, rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
+    onChangeReview(newReview, isReviewed, ReviewUserIndex, OldRating) {
         if (isReviewed) {
-            //Replace existing review to existing list
+            //Replace existing review to existing review list
             var newReviewArray = Object.assign([], this.state.reviews)
             newReviewArray[ReviewUserIndex] = newReview;
             this.setState({ reviews: newReviewArray, home: true, review: false })
+
+            //Replace previously edited rating
+            var newArray = null;
+            this.state.users.map((user, userIndex) => {
+                if (user.id === newReview.UserInterviewID) {
+                    newArray = Object.assign([], this.state.users)
+                    newArray[userIndex].rating -= OldRating;
+                    newArray[userIndex].rating += newReview.rating;
+                    this.setState({ users: newArray });
+                }
+            })
+
         } else {
-            //Add new review to existing list
+            //Add new review to existing review list (is user has not added a review)
             var newReviewArray = Object.assign([], this.state.reviews)
             newReviewArray.push(newReview);
             this.setState({ reviews: newReviewArray, home: true, review: false })
+
+            //Increment rating and total rating
+            var newArray = null;
+            this.state.users.map((user, userIndex) => {
+                //If the candidate has no rating
+                if (user.id === newReview.UserInterviewID && user.rating === 'NONE') {
+                    newArray = Object.assign([], this.state.users);
+                    newArray[userIndex].rating = newReview.rating;
+                    newArray[userIndex].totalReviews = 1;
+                    this.setState({ users: newArray });
+                }
+                //If the candidate has existing rating
+                else if (user.id === newReview.UserInterviewID) {
+                    newArray = Object.assign([], this.state.users)
+                    newArray[userIndex].rating += newReview.rating;
+                    newArray[userIndex].totalReviews += 1;
+                    this.setState({ users: newArray });
+                }
+            })
         }
-        
-        var newArray = null;
+    }
 
-        this.state.users.map((user, userIndex) => {
-            if (user.id === newReview.UserInterviewID && user.rating === 'NONE') {
-                newArray = Object.assign([], this.state.users);
-                newArray[userIndex].rating = newReview.rating;
-                newArray[userIndex].totalReviews = 1;
-                this.setState({ users: newArray });
-            }
+    onLogin(newLogin) {
+        this.setState({
+            loginUser: newLogin,
+            home: true,
+            Login: false
+        })
+    }
 
-            else if (user.id === newReview.UserInterviewID) {
-                newArray = Object.assign([], this.state.users)
-                newArray[userIndex].rating += newReview.rating;
-                newArray[userIndex].totalReviews += 1;
-                this.setState({ users: newArray });
-            }
+    onLogout() {
+        this.setState({
+            loginUser: null
         })
     }
 
@@ -204,20 +230,14 @@ class Table extends Component {
         }
     }
 
-    onLogin(newLogin) {
-
-        this.setState({
-            loginUser: newLogin,
-            home: true,
-            Login: false
-        })
-    }
-
     render() {
         if (this.state.home) {
             return (
                 <div className='AlignDivStyle'>
-                    <button className='noStyleButton' onClick={this.loginFunction.bind(this)}>Log in</button>
+                    {this.state.loginUser === null
+                        ? (<button className='noStyleButton' onClick={this.loginFunction.bind(this)}>Log in</button>)
+                        : (<button className='noStyleButton' onClick={this.onLogout.bind(this)}>Log out</button>)
+                        }
                     <table className='tableClass'>
                         <thead>
                             <tr>

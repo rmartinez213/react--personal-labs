@@ -7,37 +7,44 @@ class ReviewUser extends Component {
         super(props)
 
         this.state = {
-            checked1: '',
-            checked2: '',
-            checked3: '',
-            checked4: '',
-            checked5: '',
             
             reviews: this.props.reviews,
             user: this.props.user,
             account: this.props.loginAccount,
 
+            //For user input
             inputReviewVal: 3,
             inputName: '',
             inputComment: '',
 
+            //For radio button input
+            checked1: '',
+            checked2: '',
+            checked3: '',
+            checked4: '',
+            checked5: '',
+
+            //Values for exporting to TableComponent
             isReviewed: false,
-            UserIndex: null
+            UserIndex: null,
+            OldRating: null
         }
     }
 
     componentWillMount() {
 
-        //Setting states for existing reviews for candidates (1 review per user)
+        //Setting states for existing reviews for candidates (1 review per user per candidate)
         if (this.state.account !== null) {
             this.state.reviews.map((review, userIndex) => {
                 if (review.AccountID === this.state.account.id && this.state.user.id === review.UserInterviewID) {
                     this.setState({
                         inputName: review.name,
+                        inputReviewVal: review.rating,
                         inputComment: review.comment,
                         ['checked' + review.rating]: 'checked',
                         isReviewed: true,
-                        UserIndex: userIndex
+                        UserIndex: userIndex,
+                        OldRating: review.rating
                     })
                     return null;
                 }
@@ -76,7 +83,7 @@ class ReviewUser extends Component {
             }
         }
 
-        this.props.reviewUser(newReview, this.state.isReviewed, this.state.UserIndex);
+        this.props.reviewUser(newReview, this.state.isReviewed, this.state.UserIndex, this.state.OldRating);
     }
 
     //Manage keystroke events
@@ -95,11 +102,8 @@ class ReviewUser extends Component {
         })
     }
 
-    
 
     render() {
-
-
         return (
             <div className='AlignDivStyle'>
                 <button className='noStyleButton' align='left' onClick={() => this.props.cancel()}> Return to home</button>
