@@ -116,7 +116,17 @@ class Table extends Component {
         });
     }
 
-    //Create new array obj and set state
+    resetHome() {
+        this.setState({
+            home: true,
+            add: false,
+            edit: false,
+            review: false,
+            login: false
+        })
+    }
+
+    //Create new obj array, push new candidate (user), and set state
     onChangeAddUser(newUser) {
         const newArray = Object.assign([], this.state.users);
         newArray.push(newUser);
@@ -130,14 +140,20 @@ class Table extends Component {
         this.setState({ users: newArray, home: true, edit: false })
     }
 
-    onChangeReview(newReview) {
-        console.log(newReview)
-
-        //Add new review to existing list
-        var newReviewArray = Object.assign([], this.state.reviews)
-        newReviewArray.push(newReview);
-        this.setState({ reviews: newReviewArray, home: true, review: false })
-
+    onChangeReview(newReview, isReviewed, ReviewUserIndex) {
+        //{ id: 1, UserInterviewID: 2, AccountID: 3, rating: 1, name: 'Daniel Rodgriguez', date: '2/18/2019', comment: 'He has a unique voice' },
+        if (isReviewed) {
+            //Replace existing review to existing list
+            var newReviewArray = Object.assign([], this.state.reviews)
+            newReviewArray[ReviewUserIndex] = newReview;
+            this.setState({ reviews: newReviewArray, home: true, review: false })
+        } else {
+            //Add new review to existing list
+            var newReviewArray = Object.assign([], this.state.reviews)
+            newReviewArray.push(newReview);
+            this.setState({ reviews: newReviewArray, home: true, review: false })
+        }
+        
         var newArray = null;
 
         this.state.users.map((user, userIndex) => {
@@ -157,22 +173,43 @@ class Table extends Component {
         })
     }
 
+    displayOperationsHead() {
+        if (this.state.loginUser.role === 'admin') {
+            return (
+                <td> <b>Operations</b></td>
+            )
+        }
+    }
+
+    displayOperations(user, index) {
+        if (this.state.loginUser.role === 'admin') {
+            return (
+                <td>
+                    <button
+                        type='button'
+                        onClick={this.editUserFunction.bind(this, index)}>
+                        Edit
+                    </button>
+                    <button type='button' onClick={this.deleteFunction.bind(this, user)}>Delete</button>
+                </td>
+            )
+        }
+    }
+
+    displayAdd() {
+        if (this.state.loginUser.role === 'admin') {
+            return (
+                <button onClick={() => { this.setState({ home: false, add: true }) }}>Add Student</button>
+            )
+        }
+    }
+
     onLogin(newLogin) {
 
         this.setState({
             loginUser: newLogin,
             home: true,
             Login: false
-        })
-    }
-
-    resetHome() {
-        this.setState({
-            home: true,
-            add: false,
-            edit: false,
-            review: false,
-            login: false
         })
     }
 
@@ -189,10 +226,10 @@ class Table extends Component {
                                 <td><b>Specialist</b></td>
                                 <td><b>Presentation</b></td>
                                 <td><b>Rating</b></td>
-                                {this.state.userRole === 'admin' ? (
-                                    <td> <b>Operations</b></td>
-                                ) :
+                                {this.state.loginUser === null ? (
                                     (null)
+                                ) :
+                                    (this.displayOperationsHead())
                                 }
                             </tr>
                         </thead>
@@ -210,28 +247,20 @@ class Table extends Component {
                                         <td>{user.specialist}</td>
                                         <td>{user.presentation}</td>
                                         <td>{user.rating === 'NONE' ? user.rating : (user.rating / user.totalReviews).toPrecision(3)}</td>
-                                        {this.state.userRole === 'admin' ? (
-                                            <td>
-                                                <button
-                                                    type='button'
-                                                    onClick={this.editUserFunction.bind(this, index)}>
-                                                    Edit
-                                                </button>
-                                                <button type='button' onClick={this.deleteFunction.bind(this, user)}>Delete</button>
-                                            </td>
-                                            )
-                                            :
+                                        {this.state.loginUser === null ?
                                             (null)
+                                            :
+                                            (this.displayOperations(user, index))
                                         }
                                     </tr>
                                 )
                             })}
                         </tbody>
                     </table>
-                    {this.state.userRole === 'admin' ? (
-                        <button onClick={() => { this.setState({ home: false, add: true }) }}>Add Student</button>
-                        ) :
+                    {this.state.loginUser === null ? (
                         (null)
+                    ) :
+                        (this.displayAdd())
                     }
                 </div>
             )
@@ -259,7 +288,6 @@ class Table extends Component {
 
         else if (this.state.review) {
             return (
-                console.log(this.state.loginUser),
                 <ReviewUser
                     reviewUser={this.onChangeReview.bind(this)}
                     user={this.state.users[this.state.currIndex]}

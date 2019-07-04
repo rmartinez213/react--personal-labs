@@ -19,23 +19,27 @@ class ReviewUser extends Component {
 
             inputReviewVal: 3,
             inputName: '',
-            inputComment: ''
+            inputComment: '',
+
+            isReviewed: false,
+            UserIndex: null
         }
     }
 
     componentWillMount() {
 
-        console.log('checked' + 2);
-        
+        //Setting states for existing reviews for candidates (1 review per user)
         if (this.state.account !== null) {
             this.state.reviews.map((review, userIndex) => {
                 if (review.AccountID === this.state.account.id && this.state.user.id === review.UserInterviewID) {
-                    console.log('Existing Review!!');
                     this.setState({
                         inputName: review.name,
                         inputComment: review.comment,
-                        ['checked'+review.rating]: 'checked'
+                        ['checked' + review.rating]: 'checked',
+                        isReviewed: true,
+                        UserIndex: userIndex
                     })
+                    return null;
                 }
             })
         }
@@ -52,8 +56,9 @@ class ReviewUser extends Component {
             newReview = {
                 id: 1,
                 UserInterviewID: this.state.user.id,
+                AccountID: this.state.account.id,
                 rating: parseInt(this.state.inputReviewVal),
-                name: this.state.inputName,
+                name: this.state.account.name,
                 date: formatedDate,
                 comment: this.state.inputComment
             }
@@ -63,15 +68,15 @@ class ReviewUser extends Component {
             newReview = {
                 id: this.state.reviews[this.state.reviews.length - 1].id + 1,
                 UserInterviewID: this.state.user.id,
+                AccountID: this.state.account.id,
                 rating: parseInt(this.state.inputReviewVal),
-                name: this.state.inputName,
+                name: this.state.account.name,
                 date: formatedDate,
                 comment: this.state.inputComment
             }
         }
 
-
-        this.props.reviewUser(newReview);
+        this.props.reviewUser(newReview, this.state.isReviewed, this.state.UserIndex);
     }
 
     //Manage keystroke events
@@ -90,11 +95,7 @@ class ReviewUser extends Component {
         })
     }
 
-    displayEditTable() {
-
-       
-    }
-
+    
 
     render() {
 
@@ -158,12 +159,7 @@ class ReviewUser extends Component {
                                         <input id={3} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked3} />
                                         <input id={4} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked4} />
                                         <input id={5} name='inputReviewVal' type='radio' onChange={e => this.onChangeRadio(e)} checked={this.state.checked5} />5
-                                </td>
-                                </tr>
-
-                                <tr>
-                                    <td><b>Name</b></td>
-                                    <td align='left'><input type='text' onChange={e => this.onChange(e)} value={this.state.inputName} name='inputName' /></td>
+                                    </td>
                                 </tr>
 
                                 <tr>
